@@ -1,6 +1,6 @@
 CC = gcc
 CFLAG = -Wall -Wextra -Werror
-SRC = main.c ret_data.c get_key.c init_term.c cvt_dlstkey.c
+SRC = main.c
 SRC_DIR = ./src
 SRC_C = $(patsubst %, $(SRC_DIR)/%, $(SRC))
 OBJ = $(SRC:.c=.o)
@@ -10,7 +10,7 @@ HDIR = include
 LIB = libft/libft.a ft_printf/libftprintf.a
 L_H = -L libft -lft -L ft_printf -lftprintf -ltermcap
 FILE = 
-NAME = 21sh
+NAME = test.exe
 .PHONY: re run rr clean fclean all
 
 all: $(LIB) $(NAME)
