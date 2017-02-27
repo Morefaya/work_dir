@@ -35,8 +35,12 @@ int		main(int ac, char **av)
 	struct dirent	*data;
 	char			*tmp;
 
-	(void)ac;
-	(void)av;
+	if (ac != 2)
+	{
+		ft_printf("1 arg plz\n");
+		return (1);
+	}
+	if ()
 	i = 0;
 	ft_bzero(buff, PATH_MAX);
 	if (!(getcwd(buff, PATH_MAX)))
