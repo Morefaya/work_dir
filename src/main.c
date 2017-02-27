@@ -13,53 +13,81 @@ int		match(char *s1, char *s2)
 	return (0);
 }
 
-/*int		main(int ac, char **av)
+char	*create_path(struct dirent *data, char *dir)
 {
-	char	*s1;
-	char	*s2;
-	if (ac != 3)
-		return (1);
-	s1 = av[1];
-	s2 = av[2];
-	ft_printf("match: %d\n", match(s1, s2));
-	return (0);
-}*/
+	char	*tmp;
+	char	*ret;
 
+	if (!(tmp = ft_strjoin(dir, "/")))
+		return (NULL);
+	ret = ft_strjoin(tmp, data->d_name);
+	free(tmp);
+	return (ret);
+}
 
+void	search(DIR *fd, char *buff, char *dir)
+{
+	struct dirent	*data;
+	char			*tmp_1;
+	char			*tmp_2;
+
+	while ((data = readdir(fd)))
+	{
+		tmp_1 = NULL;
+		tmp_2 = NULL;
+		if (!(tmp_1 = create_path(data, dir))
+			|| !(tmp_2 = ft_strjoin(buff, "*")))
+		{
+			free(tmp_1);
+			free(tmp_2);
+			return ;
+		}
+		ft_printf("%s, match: %d\n", data->d_name, match(tmp_1, tmp_2));
+	}
+}
+
+char	*deal_path(char *str)
+{
+	int		i;
+
+	i = 0;
+	if (!str || !ft_strchr(str, '/'))
+		return (NULL);
+	while (str[i])
+		i++;
+	while (i >= 0 && str[i] != '/')
+		i--;
+	return (ft_strsub(str, 0, i));
+}
 
 int		main(int ac, char **av)
 {
-	char			buff[PATH_MAX];
+	char			*buff;
+	char			*dir;
 	int				i;
 	DIR				*fd;
-	struct dirent	*data;
-	char			*tmp;
 
 	if (ac != 2)
 	{
 		ft_printf("1 arg plz\n");
 		return (1);
 	}
-	if ()
-	i = 0;
-	ft_bzero(buff, PATH_MAX);
-	if (!(getcwd(buff, PATH_MAX)))
+	if (!(buff = ft_strtrim(av[1])) || !(i = ft_strlen(buff)) || i > PATH_MAX)
 	{
-		ft_putendl(strerror(errno));
-		return (1);
+		ft_printf("not good format\n");
+		return (2);
 	}
-	if (!(fd = opendir(buff)))
+	if (!(dir = deal_path(buff)))
 	{
-		ft_putendl(strerror(errno));
+		ft_printf("error\n");
+		return (3);
+	}
+	if (!(fd = opendir(dir)))
+	{
+		ft_printf("%s, %s\n", strerror(errno), buff);
 		return (2);	
 	}
-	while ((data = readdir(fd)))
-	{
-		if (!(tmp = ft_strjoin(buff, data->d_name)))
-			return (3);
-		ft_printf("%s, %d\n", data->d_name, match(tmp, "*.c"));
-		free(tmp);
-	}
+	search(fd, buff, dir);
 	closedir(fd);
 	return (0);
 }
